@@ -31,6 +31,88 @@
 		var portamento=0.05;	// portamento/glide speed
 		var activeNotes = [];	// the stack of actively-pressed keys
 
+		Colors = {};
+		Colors.names = {
+			aqua: "#00ffff",
+			azure: "#f0ffff",
+			beige: "#f5f5dc",
+			black: "#000000",
+			blue: "#0000ff",
+			brown: "#a52a2a",
+			cyan: "#00ffff",
+			darkblue: "#00008b",
+			darkcyan: "#008b8b",
+			darkgrey: "#a9a9a9",
+			darkgreen: "#006400",
+			darkkhaki: "#bdb76b",
+			darkmagenta: "#8b008b",
+			darkolivegreen: "#556b2f",
+			darkorange: "#ff8c00",
+			darkorchid: "#9932cc",
+			darkred: "#8b0000",
+			darksalmon: "#e9967a",
+			darkviolet: "#9400d3",
+			fuchsia: "#ff00ff",
+			gold: "#ffd700",
+			green: "#008000",
+			indigo: "#4b0082",
+			khaki: "#f0e68c",
+			lightblue: "#add8e6",
+			lightcyan: "#e0ffff",
+			lightgreen: "#90ee90",
+			lightgrey: "#d3d3d3",
+			lightpink: "#ffb6c1",
+			lightyellow: "#ffffe0",
+			lime: "#00ff00",
+			magenta: "#ff00ff",
+			maroon: "#800000",
+			navy: "#000080",
+			olive: "#808000",
+			orange: "#ffa500",
+			pink: "#ffc0cb",
+			purple: "#800080",
+			violet: "#800080",
+			red: "#ff0000",
+			silver: "#c0c0c0",
+			white: "#ffffff",
+			yellow: "#ffff00"
+		};
+		Colors.names = {
+            'Sizzling Red': '#FF3855',
+            'Red Salsa': '#FD3A4A',
+            'Tart Orange': '#FB4D46',
+            'Orange Soda': '#FA5B3D',
+            'Bright Yellow': '#FFAA1D',
+            'Yellow Sunshine': '#FFF700',
+            'Slimy Green': '#299617',
+            'Green Lizard': '#A7F432',
+            'Denim Blue': '#2243B6',
+            'Blue Jeans': '#5DADEC',
+            'Plump Purple': '#5946B2',
+            'Purple Plum': '#9C51B6',
+            'Sweet Brown': '#A83731',
+            'Fiery Rose': '#FF5470',
+            'Sizzling Sunrise': '#FFDB00',
+            'Heat Wave': '#FF7A00',
+            'Lemon Glacier': '#FDFF00',
+            'Spring Frost': '#87FF2A',
+            'Absolute Zero': '#0048BA',
+            'Winter Sky': '#FF007C',
+            'Frostbite': '#E936A7'
+        };
+
+		Colors.random = function() {
+		    var that = this;
+            var result;
+            var count = 0;
+            for (var prop in that.names) {
+                if (Math.random() < 1 / ++count) {
+                    result = that.names[prop];
+                }
+            }
+			return result;
+		};
+
 		window.addEventListener('load', function() {
 			// patch up prefixes
 			window.AudioContext=window.AudioContext||window.webkitAudioContext;
@@ -108,12 +190,42 @@
 			return 440 * Math.pow(2,(note-69)/12);
 		}
 
+		function getStyleIdByNoteNumber(noteNumber) {
+		    var noteToStyleIdMap = {
+		        '48': 'b1',
+				'49': 'b2',
+				'50': 'b3',
+				'51': 'b4',
+				'44': 'b5',
+				'45': 'b6',
+				'46': 'b7',
+				'47': 'b8',
+				'40': 'b9',
+				'41': 'b10',
+				'42': 'b11',
+				'43': 'b12',
+				'36': 'b13',
+				'37': 'b14',
+				'38': 'b15',
+				'39': 'b16'
+			};
+		    return noteToStyleIdMap[noteNumber+''];
+		}
+
+		function hitNote(noteNumber) {
+			var styleId = getStyleIdByNoteNumber(noteNumber);
+			var cell = document.getElementById(styleId);
+			var color = Colors.random();
+			cell.style.background = color;
+		}
+
 		function noteOn(noteNumber) {
 			activeNotes.push( noteNumber );
 			oscillator.frequency.cancelScheduledValues(0);
 			oscillator.frequency.setTargetAtTime( frequencyFromNoteNumber(noteNumber), 0, portamento );
 			envelope.gain.cancelScheduledValues(0);
 			envelope.gain.setTargetAtTime(1.0, 0, attack);
+			hitNote(noteNumber);
 		}
 
 		function noteOff(noteNumber) {
@@ -135,5 +247,35 @@
 	This example uses Web MIDI input (from all available ports and channels) to drive a Web Audio monophonic synthesizer.  There is no UI.  <a href="http://github.com/cwilso/monosynth">Source available on github.</a>
 
 	<h2 id="badtime" style="visibility:hidden">No MIDI input devices present.  You're gonna have a bad time.</h2>
+
+	<table style="width: 500px; height:500px" border="1">
+		<tbody>
+			<tr>
+				<td id="b1">&nbsp;</td>
+				<td id="b2">&nbsp;</td>
+				<td id="b3">&nbsp;</td>
+				<td id="b4">&nbsp;</td>
+			</tr>
+			<tr>
+				<td id="b5">&nbsp;</td>
+				<td id="b6">&nbsp;</td>
+				<td id="b7">&nbsp;</td>
+				<td id="b8">&nbsp;</td>
+			</tr>
+			<tr>
+				<td id="b9">&nbsp;</td>
+				<td id="b10">&nbsp;</td>
+				<td id="b11">&nbsp;</td>
+				<td id="b12">&nbsp;</td>
+			</tr>
+			<tr>
+				<td id="b13">&nbsp;</td>
+				<td id="b14">&nbsp;</td>
+				<td id="b15">&nbsp;</td>
+				<td id="b16">&nbsp;</td>
+			</tr>
+		</tbody>
+	</table>
+	<!-- DivTable.com -->
 </body>
 </html>
